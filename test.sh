@@ -41,6 +41,12 @@ run_test() {
     fi
 }
 
+# Function to clean up output files
+cleanup() {
+    echo "Cleaning up output files..."
+    find tests/ -name "*.output" -type f -delete
+}
+
 # Find and run all tests
 echo "Running tests..."
 failed=0
@@ -61,10 +67,17 @@ done
 echo "----------------------"
 echo "Test Summary: $((total - failed))/$total tests passed"
 
+# Exit code to return
+exit_code=0
+
 if [ $failed -eq 0 ]; then
     echo -e "${GREEN}All tests passed!${NC}"
-    exit 0
 else
     echo -e "${RED}$failed test(s) failed${NC}"
-    exit 1
+    exit_code=1
 fi
+
+# Clean up the output files
+cleanup
+
+exit $exit_code
