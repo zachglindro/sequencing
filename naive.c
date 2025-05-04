@@ -18,7 +18,7 @@ void swap(int *a, int *b)
 	*b = temp;
 }
 
-int max_s_tasks_completed_on_time = -1;
+int max_s_on_time_count = -1;
 int *optimal_permutation;
 
 // tasks = task list
@@ -29,7 +29,7 @@ void evaluate_schedule(Task tasks[], int p[], int n, int K)
 {
 	int current_time = 0;
 	int total_tardy_weight = 0;
-	int s_tasks_completed_on_time = 0;
+	int s_on_time_count = 0;
 
 	for (int i = 0; i < n; i++) {
 		int task_index = p[i];
@@ -44,14 +44,14 @@ void evaluate_schedule(Task tasks[], int p[], int n, int K)
 		} else {
 			// Task completed on time
 			if (current_task.is_in_S) {
-				s_tasks_completed_on_time++;
+				s_on_time_count++;
 			}
 		}
 	}
 
 	if (total_tardy_weight <= K &&
-	    s_tasks_completed_on_time > max_s_tasks_completed_on_time) {
-		max_s_tasks_completed_on_time = s_tasks_completed_on_time;
+	    s_on_time_count > max_s_on_time_count) {
+		max_s_on_time_count = s_on_time_count;
 		memcpy(optimal_permutation, p, n * sizeof(int));
 	}
 }
@@ -147,11 +147,11 @@ int main(int argc, char *argv[])
 	// Use the new permutation generation function instead of recursive approach
 	generate_all_permutations(tasks, n, K);
 
-	if (max_s_tasks_completed_on_time == -1) {
+	if (max_s_on_time_count == -1) {
 		printf("No valid schedule found\n");
 	} else {
 		printf("Solution found. Number of S tasks completed: %d\n",
-		       max_s_tasks_completed_on_time);
+		       max_s_on_time_count);
 		printf("Optimal Schedule: ");
 		for (int i = 0; i < n; i++) {
 			printf("%d%s", optimal_permutation[i],
