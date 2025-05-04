@@ -57,20 +57,64 @@ void evaluate_schedule(Task tasks[], int p[], int n, int K)
 }
 
 // tasks = task list
-// p = task order (e.g. [2,5,1,4,3])
 // n = number of tasks
 // K = tardy weight limit
-void generate_permutations(Task tasks[], int p[], int k, int n, int K)
+void generate_all_permutations(Task tasks[], int n, int K)
 {
-	if (k == n) {
-		evaluate_schedule(tasks, p, n, K);
+	int start, move;
+	int *nopts =
+		(int *)malloc((n + 2) * sizeof(int)); // array of top of stacks
+	int **option = (int **)malloc(
+		(n + 2) * sizeof(int *)); // array of stacks of options
+
+	// Allocate memory for each stack
+	for (int i = 0; i < n + 2; i++) {
+		option[i] = (int *)malloc((n + 2) * sizeof(int));
 	}
 
-	for (int i = k; i < n; i++) {
-		swap(&p[k], &p[i]);
-		generate_permutations(tasks, p, k + 1, n, K);
-		swap(&p[k], &p[i]);
+	int *current_perm = (int *)malloc(n * sizeof(int));
+
+	move = start = 0;
+	nopts[start] = 1;
+
+	while (nopts[start] > 0) // while dummy stack is not empty
+	{
+		if (nopts[move] > 0) {
+			move++;
+			nopts[move] = 0; // initialize new move
+
+			if (move == n + 1) // solution found!
+			{
+				for (int i = 1; i < move; i++) {
+					current_perm[i - 1] =
+						option[i][nopts[i]];
+				}
+				evaluate_schedule(tasks, current_perm, n, K);
+			} else {
+				for (int candidate = n; candidate >= 1;
+				     candidate--) {
+					int i;
+					for (i = move - 1; i >= 1; i--)
+						if (candidate - 1 ==
+						    option[i][nopts[i]])
+							break;
+					if (!(i >= 1))
+						option[move][++nopts[move]] =
+							candidate - 1;
+				}
+			}
+		} else {
+			move--;
+			nopts[move]--;
+		}
 	}
+
+	free(current_perm);
+	for (int i = 0; i < n + 2; i++) {
+		free(option[i]);
+	}
+	free(option);
+	free(nopts);
 }
 
 int main(int argc, char *argv[])
@@ -99,12 +143,9 @@ int main(int argc, char *argv[])
 	fclose(file);
 
 	optimal_permutation = (int *)malloc(n * sizeof(int));
-	int *permutation = (int *)malloc(n * sizeof(int));
-	for (int i = 0; i < n; i++) {
-		permutation[i] = i;
-	}
 
-	generate_permutations(tasks, permutation, 0, n, K);
+	// Use the new permutation generation function instead of recursive approach
+	generate_all_permutations(tasks, n, K);
 
 	if (max_s_tasks_completed_on_time == -1) {
 		printf("No valid schedule found\n");
@@ -120,6 +161,5 @@ int main(int argc, char *argv[])
 	}
 
 	free(tasks);
-	free(permutation);
 	free(optimal_permutation);
 }
