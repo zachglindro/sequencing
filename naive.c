@@ -49,8 +49,7 @@ void evaluate_schedule(Task tasks[], int p[], int n, int K)
 		}
 	}
 
-	if (total_tardy_weight <= K &&
-	    s_on_time_count > max_s_on_time_count) {
+	if (total_tardy_weight <= K && s_on_time_count > max_s_on_time_count) {
 		max_s_on_time_count = s_on_time_count;
 		memcpy(optimal_permutation, p, n * sizeof(int));
 	}
@@ -59,7 +58,7 @@ void evaluate_schedule(Task tasks[], int p[], int n, int K)
 // tasks = task list
 // n = number of tasks
 // K = tardy weight limit
-void generate_all_permutations(Task tasks[], int n, int K)
+void generate_permutations(Task tasks[], int n, int K)
 {
 	int start, move;
 	int *nopts =
@@ -67,7 +66,6 @@ void generate_all_permutations(Task tasks[], int n, int K)
 	int **option = (int **)malloc(
 		(n + 2) * sizeof(int *)); // array of stacks of options
 
-	// Allocate memory for each stack
 	for (int i = 0; i < n + 2; i++) {
 		option[i] = (int *)malloc((n + 2) * sizeof(int));
 	}
@@ -144,8 +142,7 @@ int main(int argc, char *argv[])
 
 	optimal_permutation = (int *)malloc(n * sizeof(int));
 
-	// Use the new permutation generation function instead of recursive approach
-	generate_all_permutations(tasks, n, K);
+	generate_permutations(tasks, n, K);
 
 	if (max_s_on_time_count == -1) {
 		printf("No valid schedule found\n");
