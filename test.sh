@@ -6,8 +6,8 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Compile the program
-echo "Compiling naive.c..."
-gcc -o naive naive.c
+echo "Compiling moore.c..."
+gcc -o moore moore.c
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}Compilation failed${NC}"
@@ -25,7 +25,7 @@ run_test() {
     echo -n "Running test ${test_name}... "
     
     # Run the program with the test input
-    ./naive "${test_file}" > "${output_file}"
+    ./moore "${test_file}" > "${output_file}"
     
     # Compare output with expected output
     if diff -w "${output_file}" "${expected_file}" > /dev/null; then
